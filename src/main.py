@@ -18,13 +18,13 @@ def main(input_alignment_file, base_work_dir):
             pair_id = seq1.split(".")[-2] + "_" + seq2.split(".")[-2]
             pair_dir = create_dir(os.path.join(pairs_dir, pair_id))
             align_out="alignment00.txt"
-            results.append(masa_wrapper(pair_dir, 1,seq1, seq2,align_out, os.path.join(base_work_dir, "sequences")))
-
-            #results.append(get_metrics(pair_dir, align_out))
+            seq1f, seq2f, alignf = compss_wait_on(masa_wrapper(pair_dir, 1,seq1, seq2,align_out, os.path.join(base_work_dir, "sequences")))
+            masa(pair_dir, 1, seq1f, seq2f, alignf)
+            results.append(get_metrics(pair_dir, align_out))
 
     results = compss_wait_on(results)
-    # for res in results:
-    #     print(res)
+    for res in results:
+        print(res)
 
 
 if __name__ == "__main__":
