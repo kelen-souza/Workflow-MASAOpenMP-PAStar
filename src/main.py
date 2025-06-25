@@ -2,7 +2,7 @@ from pycompss.api.api import compss_wait_on, compss_barrier
 from apps import *
 import argparse
 import os
-
+from pathlib import Path
 
 
 def main(input_alignment_file, base_work_dir, max_sequences=5):
@@ -28,7 +28,7 @@ def main(input_alignment_file, base_work_dir, max_sequences=5):
             pair_dir = os.path.join(pairs_rootdir, pair_id)
             seq1f = os.path.join(sequence_dir, seq1)
             seq2f = os.path.join(sequence_dir, seq2)
-            alignf = os.path.join(pair_dir, align_out)
+            alignf = Path(os.path.join(pair_dir, align_out))
             # print(pair_id)
             # print(seq1f)
             # print(seq2f)
