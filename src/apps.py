@@ -104,16 +104,8 @@ def filter_sequences(metrics, seq_folder, max_seqs, joined_sequences):
                text_seqs += text
      with compss_open(joined_sequences, "w+") as file_:
           file_.write(text_seqs)
+     return joined_sequences
 
-     
-
-
-
-
-
-     
-
-     
 
 @task(multifasta_file=FILE_IN, sequence_dir=IN, returns=list)
 def split_sequences(multifasta_file, sequence_dir):
@@ -136,3 +128,9 @@ def split_sequences(multifasta_file, sequence_dir):
           record_ids.append(f"{seq_id}.fasta")
      return record_ids
 
+
+@constraint(computing_units="1")
+@binary(binary="msa_pastar", args="-f {{output}} -t {{threads}} {{input_}}")
+@task(output=FILE_OUT, threads = IN, input_=FILE_IN)
+def pastar(output, threads, input_):
+     pass

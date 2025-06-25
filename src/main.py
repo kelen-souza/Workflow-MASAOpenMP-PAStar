@@ -37,7 +37,9 @@ def main(input_alignment_file, base_work_dir, max_sequences=5):
             metrics.append(get_metrics(pair_dir, alignf, seq1, seq2))
     joined_sequences = os.path.join(base_work_dir, "selected_sequences.fasta")
     # compss_wait_on(metrics)
-    compss_wait_on(filter_sequences(metrics, sequence_dir, max_sequences,joined_sequences))
+    filter_sequences(metrics, sequence_dir, max_sequences,joined_sequences)
+    msa_alignment = os.path.join(base_work_dir, "msa_alignment.fasta")
+    compss_wait_on(pastar(msa_alignment, 1, joined_sequences))
 
 
 if __name__ == "__main__":
