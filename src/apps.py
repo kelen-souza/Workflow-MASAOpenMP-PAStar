@@ -125,7 +125,7 @@ def split_sequences(multifasta_file, sequence_dir):
           if len(r.id) > 8:
                seq_id = r.id[:8]
           else:
-                r.id
+               seq_id = r.id
           out_file = os.path.join(sequence_dir, f"{seq_id}.fasta")
           SeqIO.write(r, out_file, "fasta")
           record_ids.append(f"{seq_id}.fasta")
