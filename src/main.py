@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 
-def main(input_alignment_file, base_work_dir, max_sequences=5):
+def main(input_alignment_file, base_work_dir, max_sequences, pastar_threads):
     align_out="alignment.00.txt"
     sequence_dir = compss_wait_on(create_dir(os.path.join(base_work_dir, "sequences")))
     split_files = compss_wait_on(split_sequences(input_alignment_file, sequence_dir))
@@ -39,13 +39,15 @@ def main(input_alignment_file, base_work_dir, max_sequences=5):
     # compss_wait_on(metrics)
     filter_sequences(metrics, sequence_dir, max_sequences,joined_sequences)
     msa_alignment = os.path.join(base_work_dir, "msa_alignment.fasta")
-    compss_wait_on(pastar(msa_alignment, 1, joined_sequences))
+    compss_wait_on(pastar(msa_alignment, pastar_threads, joined_sequences))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type=str, required=True, help="Arquivo multifasta de entrada")
-    parser.add_argument("-w", "--workdir", type=str, required=False, default=os.getcwd(), help="Diretório de trabalho")
+    parser.add_argument("-i", "--input", type=str, required=True, help="Multifasta file used as input")
+    parser.add_argument("-w", "--workdir", type=str, required=False, default=os.getcwd(), help="Working directory, where all the outputs will be stored")
+    parser.add_argument("-m", "--max_seqs", type=int, required=False, default=5, help="Maximum number of sequences that will undergo the multi-sequence alignment with pastar")
+    parser.add_argument("-p", "--pastar_threads", type=int, required=False, default=1, help="Number of threads to be used in pastar")
     args = parser.parse_args()
 
-    main(args.input, args.workdir)
+    main(args.input, args.workdir, args.max_seqs, args.pastar_threads)

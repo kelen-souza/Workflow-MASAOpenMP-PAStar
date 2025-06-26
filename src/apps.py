@@ -122,14 +122,17 @@ def split_sequences(multifasta_file, sequence_dir):
      records = list(SeqIO.parse(multifasta_file, "fasta"))
      record_ids = list()
      for r in records:
-          seq_id = r.id[:9] if len(r.id) > 9 else r.id
+          if len(r.id) > 8:
+               seq_id = r.id[:8]
+          else:
+                r.id
           out_file = os.path.join(sequence_dir, f"{seq_id}.fasta")
           SeqIO.write(r, out_file, "fasta")
           record_ids.append(f"{seq_id}.fasta")
      return record_ids
 
 
-@constraint(computing_units="1")
+#@constraint(computing_units="1")
 @binary(binary="msa_pastar", args="-f {{output}} -t {{threads}} {{input_}}")
 @task(output=FILE_OUT, threads = IN, input_=FILE_IN)
 def pastar(output, threads, input_):
