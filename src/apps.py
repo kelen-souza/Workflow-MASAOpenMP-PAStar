@@ -74,7 +74,7 @@ def get_metrics(pair_dir, alignment_file, seq1_ac, seq2_ac):
      return metrics
 
 @task(metrics=COLLECTION_IN, seq_folder=IN, max_seqs=IN, joined_sequences=FILE_OUT)
-def filter_sequences(metrics, seq_folder, max_seqs, joined_sequences):
+def filter_sequences(metrics, seq_folder, max_seqs, similar, joined_sequences):
      import os
      from pycompss.api.api import compss_open
      seqs_total_score = dict()
@@ -87,7 +87,7 @@ def filter_sequences(metrics, seq_folder, max_seqs, joined_sequences):
           seqs_total_score[m["sequence_1"]].append(m["total_score"])
           seqs_total_score[m["sequence_2"]].append(m["total_score"])
      avg_score_seq = [(x, sum(y)/len(y)) for x, y in seqs_total_score.items()]
-     score_sorted = sorted(avg_score_seq, key=lambda x: x[1])
+     score_sorted = sorted(avg_score_seq, key=lambda x: x[1], reverse=similar)
      selected = list()
      print("Score of each sequence")
      for i, j in score_sorted:
