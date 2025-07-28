@@ -13,9 +13,9 @@ def create_dir(dir):
      return dir
 
 @constraint(computing_units="1")
-@binary(binary="masa-openmp", args="--work-dir {{work_dir}} -t {{threads}} {{input_1}} {{input_2}}")
+@binary(binary="OMP_NUM_THREADS=1 masa-openmp", args="--work-dir {{work_dir}} {{input_1}} {{input_2}}")
 @task(work_dir=IN, input_1=FILE_IN, input_2=FILE_IN, alignment_file= INOUT)
-def masa(work_dir, threads, input_1, input_2, alignment_file) :
+def masa(work_dir, input_1, input_2, alignment_file) :
      """Runs the MASA binary through pycompss
 
      Args:

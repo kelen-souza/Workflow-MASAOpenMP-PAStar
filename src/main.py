@@ -37,7 +37,7 @@ def main(input_alignment_file, base_work_dir, max_sequences, pastar_threads, sim
             # print(seq1f)
             # print(seq2f)
             # print(alignf)
-            masa(pair_dir, 1, seq1f, seq2f, alignf)
+            masa(pair_dir, seq1f, seq2f, alignf)
             metrics.append(get_metrics(pair_dir, alignf, seq1, seq2))
     joined_sequences = os.path.join(base_work_dir, "selected_sequences.fasta")
     # compss_wait_on(metrics)
