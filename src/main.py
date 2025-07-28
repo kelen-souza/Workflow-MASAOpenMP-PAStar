@@ -59,5 +59,6 @@ if __name__ == "__main__":
                         default=1, help="Number of threads to be used in pastar")
     parser.add_argument("-s", "--similar", help="By default the workflow will select the most divergent sequences",
                         type=bool, action=argparse.BooleanOptionalAction, default=False)
+    args = parser.parse_args()
     main(args.input, args.workdir, args.max_seqs,
          args.pastar_threads, args.similar)
