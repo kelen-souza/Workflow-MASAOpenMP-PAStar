@@ -14,11 +14,13 @@ module load gcc/9.3_sequana
 module load boost/1.87.0_gnu+openmpi-4.1.4_sequana
 module load masa-openmp/1.0.1.1024_sequana
 export PATH=$PATH:/scratch/cenapadrjsd/app/pa-star2/bin/
+module load anaconda3/2024.02_sequana
+module load anaconda3/2024.02_sequana;eval "$(conda shell.bash hook)";conda activate /scratch/cenapadrjsd/rafael.terra2/conda_envs/parsl_test
 
 # Diretório de trabalho
-WORKING_DIR="/scratch/cenapadrjsd/kelen.souza/workflow_sscad_2025/Workflow-MASAOpenMP-PAStar/"
+WORKING_DIR="/scratch/cenapadrjsd/rafael.terra2/Workflow-MASAOpenMP-PAStar/experiments/saida"
 
-SEQ_FILE="${WORKING_DIR}/entrada.fasta"        # Arquivo no formato multifasta
+SEQ_FILE="/scratch/cenapadrjsd/rafael.terra2/Workflow-MASAOpenMP-PAStar/experiments/C-denv1.fasta"        # Arquivo no formato multifasta
 SEQS_PATH="${WORKING_DIR}/sequences/"          # Pasta das sequências individuais
 PAIRS_PATH="${WORKING_DIR}/pair_sequences"     # Pasta com pares de sequências
 
