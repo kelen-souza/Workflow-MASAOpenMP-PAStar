@@ -29,3 +29,4 @@ if __name__ == "__main__":
         sys.exit()
     multifasta_file = sys.argv[1]
     sequence_dir = sys.argv[2]
+    split_sequences(multifasta_file, sequence_dir)

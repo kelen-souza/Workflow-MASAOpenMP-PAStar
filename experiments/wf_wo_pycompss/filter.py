@@ -88,6 +88,7 @@ if __name__ == "__main__":
     files = glob.glob(os.path.join(pairs_dir, "*"))
     metrics = list()
     for f in files:
-        seqs = os.path.basename(f)
-        metrics.append(get_metrics(f, os.path.join(f, "alignment00.txt"), seqs[0], seqs[1]))
+        seq = f.split('/')[-1]
+        seqs = seq.split('_')
+        metrics.append(get_metrics(f, os.path.join(f, "alignment.00.txt"), seqs[0] + ".fasta", seqs[1] + ".fasta"))
     filter_sequences(metrics, sequences_dir, max_seqs, similar, joined_sequences)
