@@ -3,45 +3,41 @@ from pycompss.api.binary import binary
 from pycompss.api.constraint import constraint
 from pycompss.api.parameter import *
 import os
-MASA_BINARY = "masa-openmp"
 
+MASA_BINARY = "masa-openmp"
 
 @task(seq=FILE_IN, returns=int)
 def get_seq_length(seq):
     total_len = 0
 
-    with open(seq, 'r') as f:
+    with open(seq, "r") as f:
         for line in f:
             # Pula linhas de cabeçalho
-            if line.startswith('>'):
+            if line.startswith(">"):
                 continue
             # Remove quebras de linha e soma o tamanho do texto
             total_len += len(line.rstrip())
-            
+
     return total_len
 
 @task(csv_file=FILE_IN, returns=list)
 def load_benchmark(csv_file):
     import csv
+
     observations = []
 
     with open(csv_file) as f:
-
         reader = csv.DictReader(f)
 
         for row in reader:
-
             threads = int(row["Threads"])
 
             for col in row:
-
                 if col == "Threads":
                     continue
 
                 size = int(col.replace("nt", ""))
-
                 complexity = size * size
-
                 runtime = float(row[col])
 
                 observations.append(
@@ -63,7 +59,6 @@ def train_model(data):
     y = []
 
     for complexity, threads, runtime in data:
-
         x = math.log(complexity)
         t = threads
 
@@ -89,50 +84,48 @@ def train_model(data):
 @task(complexity=IN, coef=IN, returns=int)
 def choose_threads(complexity, coef):
     import math
-    import numpy as np
-    candidates = [
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        48
-    ]
 
+    candidates = [1, 2, 4, 8, 16, 32, 48]
     best_threads = 1
     best_time = float("inf")
 
-    for t in candidates:
+    x = math.log(complexity)
 
-        x = math.log(complexity)
+    for t in candidates:
         predicted = (
-            coef[0] +
-            coef[1] * x +
-            coef[2] * (x**2) +
-            coef[3] * t +
-            coef[4] * (t**2) +
-            coef[5] * x * t
-        )    
+            coef[0]
+            + coef[1] * x
+            + coef[2] * (x ** 2)
+            + coef[3] * t
+            + coef[4] * (t ** 2)
+            + coef[5] * x * t
+        )
+
         if predicted < best_time:
             best_time = predicted
             best_threads = t
 
     return best_threads
 
-
-
 @task(returns=str)
 def create_dir(dir):
     import os
+
     os.makedirs(dir, exist_ok=True)
     return dir
 
-
-   
-@constraint(computing_units="{{threads}}")
-@binary(binary="masa-openmp", args="--alignment-edges=++ --work-dir {{work_dir}} {{input_1}} {{input_2}}")
-@task(work_dir=IN, input_1=FILE_IN, input_2=FILE_IN, alignment_file=INOUT, threads=IN)
+@constraint(computing_units="$threads")
+@binary(
+    binary="masa-openmp",
+    args="--alignment-edges=++ --work-dir {{work_dir}} {{input_1}} {{input_2}}"
+)
+@task(
+    work_dir=IN,
+    input_1=FILE_IN,
+    input_2=FILE_IN,
+    alignment_file=INOUT,
+    threads=IN
+)
 def masa(work_dir, input_1, input_2, alignment_file, threads):
     """Runs the MASA binary through pycompss
 
@@ -142,7 +135,6 @@ def masa(work_dir, input_1, input_2, alignment_file, threads):
          input_2 (str): name of the second fasta file
      """
     pass
-
 
 @task(pair_dir=IN, alignment_file=INOUT, returns=dict)
 def get_metrics(pair_dir, alignment_file, seq1_ac, seq2_ac):
@@ -159,33 +151,47 @@ def get_metrics(pair_dir, alignment_file, seq1_ac, seq2_ac):
     import os
     from pathlib import Path
     from pycompss.api.api import compss_open
+
     metrics = dict()
+
     with compss_open(str(alignment_file), "r") as f:
         text = f.read()
+
         total_score_str = re.findall(r"Total Score:\s+\d+", text)
         matches_str = re.findall(r"Matches:\s+\d+", text)
         mismatches_str = re.findall(r"Mismatches:\s+\d+", text)
         gap_openings_str = re.findall(r"Gap Openings:\s+\d+", text)
         gap_extentions_str = re.findall(r"Gap Extentions:\s+\d+", text)
+
         if len(total_score_str) > 0:
             metrics["total_score"] = float(
-                (total_score_str[0].split(":")[1]).strip())
+                (total_score_str[0].split(":")[1]).strip()
+            )
+
         if len(matches_str) > 0:
             metrics["matches"] = float(
-                (matches_str[0].split(":")[1]).strip())
+                (matches_str[0].split(":")[1]).strip()
+            )
+
         if len(mismatches_str) > 0:
             metrics["mismatches"] = float(
-                (mismatches_str[0].split(":")[1]).strip())
+                (mismatches_str[0].split(":")[1]).strip()
+            )
+
         if len(gap_openings_str) > 0:
             metrics["gap_openings"] = float(
-                (gap_openings_str[0].split(":")[1]).strip())
+                (gap_openings_str[0].split(":")[1]).strip()
+            )
+
         if len(gap_extentions_str) > 0:
             metrics["gap_extentions"] = float(
-                (gap_extentions_str[0].split(":")[1]).strip())
+                (gap_extentions_str[0].split(":")[1]).strip()
+            )
+
         metrics["sequence_1"] = seq1_ac
         metrics["sequence_2"] = seq2_ac
-    return metrics
 
+    return metrics
 
 @task(multifasta_file=FILE_IN, sequence_dir=IN, returns=list)
 def split_sequences(multifasta_file, sequence_dir):
@@ -199,18 +205,21 @@ def split_sequences(multifasta_file, sequence_dir):
      """
     from Bio import SeqIO
     import os
+
     records = list(SeqIO.parse(multifasta_file, "fasta"))
     record_ids = list()
+
     for r in records:
         if len(r.id) > 8:
             seq_id = r.id[:8]
         else:
             seq_id = r.id
+
         out_file = os.path.join(sequence_dir, f"{seq_id}.fasta")
         SeqIO.write(r, out_file, "fasta")
         record_ids.append(f"{seq_id}.fasta")
-    return record_ids
 
+    return record_ids
 
 @task(metrics=IN, returns=float)
 def compute_identity(metrics):
@@ -219,7 +228,7 @@ def compute_identity(metrics):
     gap_openings = float(metrics["gap_openings"])
     gap_extentions = float(metrics["gap_extentions"])
 
-    alignment_length = matches + mismatches + gap_openings + gap_extentions
+    alignment_length = (matches + mismatches + gap_openings + gap_extentions)
 
     if alignment_length == 0:
         return 0.0
@@ -247,6 +256,7 @@ def maxmin_selection(pairs, sequences, k, similar):
         distance = similarity
 
     avg_metric = {}
+
     for s in sequences:
         if distance[s]:
             avg_metric[s] = sum(distance[s].values()) / len(distance[s])
@@ -263,7 +273,12 @@ def maxmin_selection(pairs, sequences, k, similar):
             if s in selected:
                 continue
 
-            values = [distance[s][x] for x in selected if x in distance[s]]
+            values = [
+                distance[s][x]
+                for x in selected
+                if x in distance[s]
+            ]
+
             if not values:
                 continue
 
@@ -288,20 +303,20 @@ def write_selected_sequences(selected, sequence_dir, output_fasta):
             with open(os.path.join(sequence_dir, seq_file)) as f:
                 out.write(f.read())
 
-
 @task(pairs=COLLECTION_IN, output_csv=FILE_OUT)
 def write_pairwise_csv(pairs, output_csv):
     import csv
+
     with open(output_csv, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
+
         writer.writerow(["seq1", "seq2", "identity"])
+
         for s1, s2, identity in pairs:
             writer.writerow([s1, s2, round(identity, 4)])
 
-# @constraint(computing_units="1")
-
 
 @binary(binary="msa_pastar", args="-f {{output}} -t {{threads}} {{input_}}")
-@task(output=FILE_OUT, threads= IN, input_=FILE_IN)
+@task(output=FILE_OUT, threads=IN, input_=FILE_IN)
 def pastar(output, threads, input_):
     pass
