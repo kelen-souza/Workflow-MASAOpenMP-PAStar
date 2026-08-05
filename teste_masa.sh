@@ -12,7 +12,7 @@
 #export OMP_NUM_THREADS=1
 module load gcc/9.3_sequana
 module load boost/1.87.0_gnu+openmpi-4.1.4_sequana
-module load masa-openmp/1.0.1.1024_sequana
+module load masa-cudalign/4.0.2.1028_sequana
 
 # SEQ_PATH="/scratch/cenapadrjsd/rafael.terra2/Workflow-MASAOpenMP-PAStar/src/saida/sequences"
 SEQ_PATH="/scratch/cenapadrjsd/kelen.souza/workflow_sscad_2025/Workflow-MASAOpenMP-PAStar/resultados_genomas_completos_18seq_20h_1/sequences/"
