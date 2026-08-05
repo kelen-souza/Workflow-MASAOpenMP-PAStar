@@ -4,7 +4,7 @@ from pycompss.api.constraint import constraint
 from pycompss.api.parameter import *
 import os
 
-MASA_BINARY = "masa-openmp"
+MASA_BINARY = "cudalign"
 
 @task(seq=FILE_IN, returns=int)
 def get_seq_length(seq):
@@ -116,7 +116,7 @@ def create_dir(dir):
 
 @constraint(computing_units="$threads")
 @binary(
-    binary="masa-openmp",
+    binary="cudalign",
     args="--alignment-edges=++ --work-dir {{work_dir}} {{input_1}} {{input_2}}"
 )
 @task(
