@@ -1,10 +1,10 @@
-# Workflow MASA-OPENMP PASTAR
+# Workflow MASA-CUDAlign PASTAR
 
 O _workflow_ científico apresentado neste repositório tem como propósito realizar o alinhamento múltiplo de sequências de um subconjunto utilizado como entrada.
 
 Para isso, estão acoplados ao _workflow_ dois programas exatos para alinhamento de sequências, sendo eles:
 
-1. [MASA-OPENMP](https://github.com/edanssandes/MASA-OpenMP)
+1. [MASA-CUDAlign](https://github.com/edanssandes/MASA-CUDAlign)
 1. [PA-star](https://github.com/danielsundfeld/astar_msa)
 
 
@@ -19,7 +19,7 @@ O _workflow_ apresenta duas versões. A primeira desenvolvida sem nenhum sistema
 
 O _workflow_ tem como requisitos os seguintes programas e bibliotecas:
 
- * MASA-OPENMP v1.0.1.1024
+ * MASA-CUDAlign v4.0.2.1028
  * PA-star2 v2.0
  * Python $\geq$ v3.11.7
  * PyCOMPSs $\geq$ v3.3.3
